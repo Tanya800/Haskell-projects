@@ -1,12 +1,29 @@
-sum' = zipWith (+) 
-f list = foldl (\ x acc -> x* 10   + acc ) 0 list
---число из списка сумм двух списков
-sumList' l1 l2 = foldl (\ x acc -> x * 10 + acc) 0 $ zipWith (+) l1 l2
+transp ([]:_) = []
+transp matrix = map head matrix : transp (map tail matrix)
 
--- сумма двух списков с разной длинной
-suml' l1 l2 = reverse $ sumL' ( reverse l1) (reverse l2)
+-- version 1
+multimatrix a b = ml a (transp b)
 
-sumL' [] [] = []
-sumL' [] l2 = l2
-sumL' l1 [] = l1
-sumL' (l:ls) (p:ps) = l+p : sumL' ls ps
+ml [] _ = []
+ml a b =
+	let 
+		na = head a
+		ta = tail a
+	in mulmat na b : ml ta b 
+
+mulmat _ [] = [] -- умножение вектора a на матрицу b 
+mulmat a b = 
+		let
+			hb = head b 
+			tb = tail b
+		in 
+		(\ x y -> sum $ zipWith (*) x y) a hb : mulmat a tb 
+
+
+-- version 2
+
+
+multimatrix a b = mulmatrix a $ transp b
+mulmatrix [] _ = []
+mulmatrix (a:as) b =  (map sum $ map ( zipWith (*) a ) b ) : mulmatrix as b
+
